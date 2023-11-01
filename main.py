@@ -98,6 +98,7 @@ def show_birthdays_next_week(contacts: AddressBook):
 def show_all_contacts(contacts):
     return "\n".join([f"{record}" for record in contacts.values()])
 
+
 # note command handlers - move to separate class
 
 
@@ -151,6 +152,16 @@ def search_notes(args, notes: NoteBook):
 # note command handlers - move to separate class
 
 
+@input_error
+def search_contacts(args: list, contacts: AddressBook):
+    word, = args
+    if len(word) < 2:
+        raise BotSyntaxException('The search word must consist of at least 2 characters')
+    
+    return "\n".join([str(record) for record in contacts.search(word)])
+
+
+
 def get_syntax_error_message(expected_command):
     return f'Incorrect syntax, enter command in the following format: "{expected_command}"'
 
@@ -196,6 +207,9 @@ def start_bot(contacts: AddressBook, notes: NoteBook):
         elif command == "all-notes":
             print(show_notes(notes))
         # Note commands - move to separate handler
+        elif command == "search":
+            print(search_contacts(args, contacts))
+
         else:
             print("Invalid command.")
 

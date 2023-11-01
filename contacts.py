@@ -11,6 +11,9 @@ class Field:
 
     def __str__(self):
         return str(self.value)
+    
+    def contains_word(self, word: str) -> bool:
+        return str(self).lower().find(word.lower()) >= 0
 
 
 class Name(Field):
@@ -35,6 +38,9 @@ class Birthday(Field):
             raise ValidationException(
                 'Birthday should be in "DD.MM.YYYY" format')
         self._value = birthday
+
+    def __str__(self):
+        return self.value.strftime(constant.DATE_FORMAT)
 
 
 class Phone(Field):
@@ -85,13 +91,16 @@ class Record:
         self.birthday = Birthday(date)
 
     def get_birthday(self):
-        return self.birthday.value if self.birthday else None
+        return self.birthday if self.birthday else None
+
+    def get_all_fields(self) -> list[Field]:
+        return [self.name, self.birthday, *self.phones]
 
     def __str__(self):
         return f"Contact name: {self.name.value:15} | Birthday: {str(self.get_birthday()):^10} | Phones: {'; '.join(p.value for p in self.phones)}"
 
 
-class AddressBook(UserDict):
+class AddressBook(UserDict[str, Record]):
     def add_record(self, record: Record):
         key = record.name.value
         self.data[key] = record
@@ -107,3 +116,13 @@ class AddressBook(UserDict):
 
     def get_birthdays_per_week(self):
         return get_birthdays_per_week(self.data)
+    
+    def search(self, word: str):
+        found_records = list()
+        for item in self.data.values():
+            for field in item.get_all_fields():
+                if field.contains_word(word):
+                    found_records.append(item)
+                    break
+        return found_records
+            
