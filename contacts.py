@@ -58,6 +58,38 @@ class Phone(Field):
                 f"Phone must contain {constant.PHONE_LEN} digits")
         self._value = new_value
 
+class Email(Field):
+    def __init__(self, email):
+        self.email = email
+
+    @property
+    def value(self):
+        return self._value
+    
+    @value.setter
+    def value(self, email):
+        pattern = r'\b[A-Za-z][A-Za-z0-9._]+@[A-Za-z]+\.[A-Za-z]{2,}\b'
+        pattern = r'[a-zA-Z]{1}[\w\.]+@[a-zA-Z]+\.[a-zA-Z]{2,}'
+        if not email = re.findall(pattern,value)
+            raise ValidationException("Invalid email address.")
+        self._value = email
+        
+       
+class Address(Field):
+    def __init__(self, address):
+        self.address = address
+
+    @property
+    def value(self):
+        return self._value
+    
+    @value.setter
+    def value(self, address):
+        if (len(address)) < 3:
+            raise ValidationException("Invalid address.")
+        self._value = address
+
+
 
 class Record:
     def __init__(self, name):
@@ -98,7 +130,12 @@ class Record:
 
     def __str__(self):
         return f"Contact name: {self.name.value:15} | Birthday: {str(self.get_birthday()):^10} | Phones: {'; '.join(p.value for p in self.phones)}"
+    
+    def add_email(self, email):
+        self.email = Email(email)
 
+    def add_address(self, address):
+        self.email = Address(address)
 
 class AddressBook(UserDict[str, Record]):
     def add_record(self, record: Record):
