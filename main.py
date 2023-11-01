@@ -97,6 +97,14 @@ def show_birthdays_next_week(contacts: AddressBook):
 def show_all_contacts(contacts):
     return "\n".join([f"{record}" for record in contacts.values()])
 
+@input_error
+def search_contacts(args: list, contacts: AddressBook):
+    word, = args
+    if len(word) < 2:
+        raise BotSyntaxException('The search word must consist of at least 2 characters')
+    
+    return "\n".join([str(record) for record in contacts.search(word)])
+
 
 def get_syntax_error_message(expected_command):
     return f'Incorrect syntax, enter command in the following format: "{expected_command}"'
@@ -127,6 +135,8 @@ def start_bot(contacts):
             print(show_birthday(args, contacts))
         elif command == "birthdays":
             print(show_birthdays_next_week(contacts))
+        elif command == "search":
+            print(search_contacts(args, contacts))
         else:
             print("Invalid command.")
 
