@@ -1,6 +1,7 @@
-import storage
+from storage import StorageContext, NotesStorageStrategy, ContactsStorageStrategy
 from exceptions import ValidationException, BotSyntaxException, DuplicateException, NotFoundException
 from contacts import AddressBook, Record
+from notes import NoteBook
 
 
 def parse_input(user_input):
@@ -16,7 +17,7 @@ def input_error(func):
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except (ValidationException, DuplicateException, NotFoundException, ) as e:
+        except (ValidationException, DuplicateException, NotFoundException) as e:
             return e
         except BotSyntaxException as e:
             return e
@@ -97,6 +98,60 @@ def show_birthdays_next_week(contacts: AddressBook):
 def show_all_contacts(contacts):
     return "\n".join([f"{record}" for record in contacts.values()])
 
+
+# note command handlers - move to separate class
+
+
+@input_error
+def add_note(notes: NoteBook):
+    note = notes.add_note()
+    text = input("Enter note text: ")
+    note.add_text(text)
+    return f"Note [{note.id}] created."
+
+
+@input_error
+def edit_note(args, notes: NoteBook):
+    if len(args) == 0:
+        raise BotSyntaxException(get_syntax_error_message("edit-note [id]"))
+    note = notes.find(args[0])
+    text = input("Enter new text: ")
+    note.add_text(text)
+    return f"Note [{note.id}] updated."
+
+
+@input_error
+def delete_note(args, notes: NoteBook):
+    if len(args) == 0:
+        raise BotSyntaxException(
+            get_syntax_error_message("delete-note [id]"))
+    id = args[0]
+    notes.delete_note(args[0])
+    return f"Note [{id}] deleted."
+
+
+@input_error
+def show_notes(notes: NoteBook):
+    return "\n".join([f"{note}" for note in notes.values()])
+
+
+@input_error
+def get_note(args, notes: NoteBook):
+    if len(args) == 0:
+        raise BotSyntaxException(get_syntax_error_message("note [id]"))
+    note = notes.find(args[0])
+    return f"id: {note.id}\ntext: {note.text}"
+
+
+@input_error
+def search_notes(args, notes: NoteBook):
+    if len(args) == 0:
+        raise BotSyntaxException(get_syntax_error_message("note [id]"))
+    result = notes.search(args)
+    return "\n".join([f"{note}" for note in result])
+# note command handlers - move to separate class
+
+
 @input_error
 def search_contacts(args: list, contacts: AddressBook):
     word, = args
@@ -106,11 +161,12 @@ def search_contacts(args: list, contacts: AddressBook):
     return "\n".join([str(record) for record in contacts.search(word)])
 
 
+
 def get_syntax_error_message(expected_command):
     return f'Incorrect syntax, enter command in the following format: "{expected_command}"'
 
 
-def start_bot(contacts):
+def start_bot(contacts: AddressBook, notes: NoteBook):
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
@@ -135,22 +191,45 @@ def start_bot(contacts):
             print(show_birthday(args, contacts))
         elif command == "birthdays":
             print(show_birthdays_next_week(contacts))
+        # Note commands - move to separate handler
+        elif command == "note":
+            print(get_note(args, notes))
+        elif command == "add-note":
+            print(add_note(notes))
+        elif command == "edit-note":
+            print(edit_note(args, notes))
+        elif command == "delete-note":
+            print(delete_note(args, notes))
+        elif command == "note":
+            print(get_note(args, notes))
+        elif command == "search-notes":
+            print(search_notes(args, notes))
+        elif command == "all-notes":
+            print(show_notes(notes))
+        # Note commands - move to separate handler
         elif command == "search":
             print(search_contacts(args, contacts))
+
         else:
             print("Invalid command.")
 
 
 def main():
+    contacts_storage = StorageContext(ContactsStorageStrategy())
+    notes_storage = StorageContext(NotesStorageStrategy())
+
     contacts = AddressBook()
+    notes = NoteBook()
 
-    # Load data from file or generate random contacts
-    contacts = storage.load_contacts_from_file(contacts)
+    # Load data from file
+    contacts = contacts_storage.load_from_file(contacts)
+    notes = notes_storage.load_from_file(notes)
 
-    start_bot(contacts)
+    start_bot(contacts, notes)
 
-    # Save contacts to file
-    storage.save_contacts_to_file(contacts)
+    # Save data to file
+    contacts_storage.save_to_file(contacts)
+    notes_storage.save_to_file(notes)
 
 
 if __name__ == "__main__":

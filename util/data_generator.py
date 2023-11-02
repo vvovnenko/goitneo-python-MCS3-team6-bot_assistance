@@ -1,9 +1,10 @@
+from notes import Note, NoteBook
 import constant
 from faker import Faker
-from contacts import Record
+from contacts import Record, AddressBook
 
 
-def populateAddressBook(book, quantity):
+def populateAddressBook(book: AddressBook, quantity):
     print("Populating random contact data")
     fake = Faker()
 
@@ -13,3 +14,14 @@ def populateAddressBook(book, quantity):
         record.add_birthday(fake.date_of_birth(
             minimum_age=18, maximum_age=50).strftime(constant.DATE_FORMAT))
         book.add_record(record)
+
+
+def populateNotes(notes: NoteBook, quantity):
+    print("Populating random notes")
+    fake = Faker()
+
+    for _ in range(quantity):
+        note = Note(notes.next_id())
+        text = ' '.join(fake.words(nb=10))
+        note.add_text(text)
+        notes.data[note.id] = note
