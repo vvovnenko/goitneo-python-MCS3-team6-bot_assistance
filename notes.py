@@ -72,6 +72,9 @@ class Note:
             raise NotFoundException(error_msg)
         self.tags.remove(found_tag)
 
+    def delete_all_tags(self):
+        self.tags = []
+
     def find_tag(self, tag):
         return next((t for t in self.tags if t.value == tag), None)
 
