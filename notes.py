@@ -37,10 +37,11 @@ class Tag(Field):
 
     @value.setter
     def value(self, new_value):
-        if len(new_value) < constant.TAG_LEN:
+        sanitized_value = new_value.lstrip('#')
+        if len(sanitized_value) < constant.TAG_LEN:
             raise ValidationException(
                 f"Note tag should be at least {constant.TAG_LEN} characters")
-        self._value = new_value
+        self._value = sanitized_value
 
 
 class Note:
@@ -53,32 +54,45 @@ class Note:
         self.text = Text(textString)
 
     def get_trimmed_text(self, text, max_len=10):
-        return text if len(text) <= max_len else text[:max_len] + "..."
+        suffix = "..."
+        return text if len(text) <= max_len else text[:max_len-len(suffix)] + suffix
 
     def add_tag(self, tag):
         tags = [tag.value for tag in self.tags]
         if tag in tags:
             raise DuplicateException(f"Tag #{tag} already exists")
-        self.tags.append(Tag(tag))
+        new_tag = Tag(tag)
+        self.tags.append(new_tag)
+        return new_tag
+
+    def delete_tag(self, tag):
+        found_tag = self.find_tag(tag)
+        if not found_tag:
+            error_msg = f"Note {self.id} is not tagged with {tag}"
+            raise NotFoundException(error_msg)
+        self.tags.remove(found_tag)
+
+    def find_tag(self, tag):
+        return next((t for t in self.tags if t.value == tag), None)
 
     def has_tags(self, search_tags):
         return any(search_tag in [tag.value for tag in self.tags] for search_tag in search_tags)
 
     def __str__(self):
-        return f"ID: {self.id:>4}|Text: {self.get_trimmed_text(self.text.value, 50):<50}|Tags: {' '.join(f'#{t.value}' for t in self.tags)}"
+        return f"ID: {self.id:^4}|Text: {self.get_trimmed_text(self.text.value, 50):<50}|Tags: {' '.join(f'#{t.value}' for t in self.tags)}"
 
 
 class NoteBook(UserDict):
     def add_note(self):
         note = Note(self.next_id())
-        self.data[id] = note
+        self.data[note.id] = note
         return note
 
     def find(self, id):
         try:
             return self.data[int(id)]
         except KeyError:
-            raise NotFoundException(f"Note with id [{self.id}] is not found")
+            raise NotFoundException(f"Note with id [{id}] is not found")
         except ValueError:
             raise ValidationException(f"Note id must be integer")
 
@@ -98,6 +112,7 @@ class NoteBook(UserDict):
             self.data.pop(existing_note.id)
 
     def next_id(self):
-        if len(self.data) == 0:
+        if not self.data:
             return 1
-        return max([int(id) for id in self.data.keys()]) + 1
+        id = max([int(id) for id in self.data.keys()]) + 1
+        return id
