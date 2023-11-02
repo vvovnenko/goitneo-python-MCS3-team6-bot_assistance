@@ -25,9 +25,11 @@ def populateAddressBook(book: AddressBook, quantity):
 def populateNotes(notes: NoteBook, quantity):
     print("Populating random notes")
     fake = Faker()
-
+    valid_tags = [item for item in fake.words(nb=20) if len(item) >= 3]
     for _ in range(quantity):
         note = Note(notes.next_id())
         text = ' '.join(fake.words(nb=10))
         note.add_text(text)
+        if note.id % 2:
+            note.add_tag(fake.word(ext_word_list=valid_tags))
         notes.data[note.id] = note
