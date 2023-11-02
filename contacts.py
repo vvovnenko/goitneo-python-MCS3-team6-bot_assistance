@@ -1,7 +1,7 @@
 import constant
 from collections import UserDict
 from exceptions import ValidationException, DuplicateException, NotFoundException, NotFoundException
-from datetime import datetime
+from datetime import date, datetime
 from birthdays import get_birthdays_per_week
 import re
 
@@ -140,6 +140,16 @@ class Record:
 
     def add_address(self, address):
         self.address = Address(address)
+        
+    def days_to_birthday(self, birthday: Birthday):
+        if self.birthday:
+            this_day = date.today()
+            birthday_day = date(this_day.year, self.birthday.value.month, self.birthday.value.day)
+            if birthday_day < this_day:
+                birthday_day = date(this_day.year + 1, self.birthday.value.month, self.birthday.value.day)
+            return (birthday_day - this_day).days
+        else:
+            return None
 
 class AddressBook(UserDict[str, Record]):
     def add_record(self, record: Record):

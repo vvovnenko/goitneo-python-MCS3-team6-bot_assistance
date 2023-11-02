@@ -1,3 +1,4 @@
+from birthdays import date_birthday, show_birthday_n_days
 from storage import StorageContext, NotesStorageStrategy, ContactsStorageStrategy
 from exceptions import ValidationException, BotSyntaxException, DuplicateException, NotFoundException
 from contacts import AddressBook, Record
@@ -161,6 +162,16 @@ def search_contacts(args: list, contacts: AddressBook):
     return "\n".join([str(record) for record in contacts.search(word)])
 
 
+@input_error
+def remove_contact(args, contacts):
+    name = args[0]
+    record = contacts.find(name)
+    if record:
+        contacts.delete(name)
+        return f"Contact {name} removed from Address Book!"
+    else:
+        raise KeyError
+
 
 def get_syntax_error_message(expected_command):
     return f'Incorrect syntax, enter command in the following format: "{expected_command}"'
@@ -191,6 +202,12 @@ def start_bot(contacts: AddressBook, notes: NoteBook):
             print(show_birthday(args, contacts))
         elif command == "birthdays":
             print(show_birthdays_next_week(contacts))
+        elif command == "bd":
+            print(show_birthday_n_days(contacts, *args))
+        elif command == "bdate":
+            print(date_birthday(contacts, *args))
+        elif command == "del":
+            print(remove_contact(args, contacts)) 
         # Note commands - move to separate handler
         elif command == "note":
             print(get_note(args, notes))
