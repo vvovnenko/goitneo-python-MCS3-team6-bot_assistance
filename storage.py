@@ -1,67 +1,42 @@
-import os
 import pickle
 import constant
 from util.data_generator import populateAddressBook, populateNotes
+from contacts import AddressBook
+from notes import NoteBook
 
 
-class StorageStrategy:
-    def load_from_file(self, container):
-        pass
+class DataStorage:
+    def __init__(self):
+        self.filename = constant.FILE_STORAGE
+        self.__book = None
+        self.__notes = None
 
-    def save_to_file(self, container):
-        with open(self.getFilePath(), "wb+") as fh:
-            pickle.dump(container, fh)
+    @property
+    def contacts(self) -> AddressBook:
+        return self.__book
 
-    def getFilePath(self):
-        dirname = os.path.dirname(__file__)
-        return os.path.join(dirname, self.get_storage())
+    @property
+    def notes(self) -> NoteBook:
+        return self.__notes
 
-    def get_storage(self):
-        pass
-
-
-class ContactsStorageStrategy(StorageStrategy):
-
-    def load_from_file(self, contacts):
+    def __enter__(self) -> None:
         try:
-            with open(self.getFilePath(), "rb") as fh:
-                print(f"Loading contacts from file [{self.getFilePath()}]")
-                contacts = pickle.load(fh)
-            return contacts
+            with open(self.filename, "rb") as fh:
+                self.__book, self.__notes = pickle.load(fh)
         except FileNotFoundError:
-            print(f"File not found [{self.getFilePath()}]")
-            if len(contacts.data) == 0:
-                populateAddressBook(contacts, 100)
-            return contacts
+            pass
 
-    def get_storage(self):
-        return constant.FILE_STORAGE_CONTACTS
+        if not isinstance(self.__book, AddressBook):
+            self.__book = AddressBook()
+            populateAddressBook(self.__book, 100)
+        if not isinstance(self.__notes, NoteBook):
+            self.__notes = NoteBook()
+            populateNotes(self.__notes, 100)
 
+    def __exit__(self, exception_type, exception_value, traceback):
+        with open(self.filename, "wb") as fh:
+            pickle.dump([self.__book, self.__notes], fh)
+        self.__book = None
+        self.__notes = None
 
-class NotesStorageStrategy(StorageStrategy):
-
-    def load_from_file(self, notes):
-        try:
-            with open(self.getFilePath(), "rb") as fh:
-                print(f"Loading notes from file [{self.getFilePath()}]")
-                notes = pickle.load(fh)
-            return notes
-        except FileNotFoundError:
-            print(f"File not found [{self.getFilePath()}]")
-            if len(notes.data) == 0:
-                populateNotes(notes, 100)
-            return notes
-
-    def get_storage(self):
-        return constant.FILE_STORAGE_NOTES
-
-
-class StorageContext:
-    def __init__(self, strategy: StorageStrategy):
-        self.strategy = strategy
-
-    def load_from_file(self, container):
-        return self.strategy.load_from_file(container)
-
-    def save_to_file(self, container):
-        return self.strategy.save_to_file(container)
+storage = DataStorage()
