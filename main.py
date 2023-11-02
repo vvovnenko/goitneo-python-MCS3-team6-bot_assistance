@@ -137,7 +137,7 @@ def show_notes(notes: NoteBook):
 
 @input_error
 def get_note(args, notes: NoteBook):
-    if len(args) == 0:
+    if not args:
         raise BotSyntaxException(get_syntax_error_message("note [id]"))
     note = notes.find(args[0])
     return f"id: {note.id}\ntext: {note.text}"
@@ -145,10 +145,32 @@ def get_note(args, notes: NoteBook):
 
 @input_error
 def search_notes(args, notes: NoteBook):
-    if len(args) == 0:
-        raise BotSyntaxException(get_syntax_error_message("note [id]"))
-    result = notes.search(args)
-    return "\n".join([f"{note}" for note in result])
+    if not args:
+        raise BotSyntaxException(get_syntax_error_message(
+            "search-notes [search-string]"))
+    if args[0] == '-tag':
+        if len(args) < 2:
+            raise BotSyntaxException(
+                get_syntax_error_message("search-notes -tag [tag]"))
+        search_tags = args[1:]
+        result = notes.search_by_tags(search_tags)
+    else:
+        result = notes.search(args)
+
+    return "\n".join(str(note) for note in result) if result else "Nothing found"
+
+
+@input_error
+def add_note_tag(args, notes: NoteBook):
+    try:
+        id, tag = args
+    except:
+        raise BotSyntaxException(
+            get_syntax_error_message("tag-note [id] [tag]"))
+
+    note = notes.find(id)
+    note.add_tag(tag)
+    return f"Tag #{tag} added to note {note.id}"
 # note command handlers - move to separate class
 
 
@@ -156,10 +178,10 @@ def search_notes(args, notes: NoteBook):
 def search_contacts(args: list, contacts: AddressBook):
     word, = args
     if len(word) < 2:
-        raise BotSyntaxException('The search word must consist of at least 2 characters')
-    
-    return "\n".join([str(record) for record in contacts.search(word)])
+        raise BotSyntaxException(
+            'The search word must consist of at least 2 characters')
 
+    return "\n".join([str(record) for record in contacts.search(word)])
 
 
 def get_syntax_error_message(expected_command):
@@ -200,6 +222,8 @@ def start_bot(contacts: AddressBook, notes: NoteBook):
             print(edit_note(args, notes))
         elif command == "delete-note":
             print(delete_note(args, notes))
+        elif command == "tag-note":
+            print(add_note_tag(args, notes))
         elif command == "note":
             print(get_note(args, notes))
         elif command == "search-notes":
