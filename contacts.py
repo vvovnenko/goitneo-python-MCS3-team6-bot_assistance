@@ -3,6 +3,7 @@ from collections import UserDict
 from exceptions import ValidationException, DuplicateException, NotFoundException, NotFoundException
 from datetime import datetime
 from birthdays import get_birthdays_per_week
+import re
 
 
 class Field:
@@ -60,7 +61,7 @@ class Phone(Field):
 
 class Email(Field):
     def __init__(self, email):
-        self.email = email
+        super().__init__(email)
 
     @property
     def value(self):
@@ -68,16 +69,15 @@ class Email(Field):
     
     @value.setter
     def value(self, email):
-        pattern = r'\b[A-Za-z][A-Za-z0-9._]+@[A-Za-z]+\.[A-Za-z]{2,}\b'
         pattern = r'[a-zA-Z]{1}[\w\.]+@[a-zA-Z]+\.[a-zA-Z]{2,}'
-        if not email = re.findall(pattern,value)
+        if not re.match(pattern, email):
             raise ValidationException("Invalid email address.")
         self._value = email
         
        
 class Address(Field):
     def __init__(self, address):
-        self.address = address
+        super().__init__(address)
 
     @property
     def value(self):
@@ -96,6 +96,8 @@ class Record:
         self.name = Name(name)
         self.birthday = None
         self.phones = []
+        self.email = None
+        self.address = None
 
     def add_phone(self, phone):
         phones = [phone.value for phone in self.phones]
@@ -126,16 +128,18 @@ class Record:
         return self.birthday if self.birthday else None
 
     def get_all_fields(self) -> list[Field]:
-        return [self.name, self.birthday, *self.phones]
+        fields = [self.name, self.birthday, *self.phones, self.email, self.address]
+        return filter(lambda f: f is not None, fields)
 
     def __str__(self):
-        return f"Contact name: {self.name.value:15} | Birthday: {str(self.get_birthday()):^10} | Phones: {'; '.join(p.value for p in self.phones)}"
+        return "Contact name: {:15} | Birthday: {:10} | Email: {:25} | Phones: {} | Address: {}".format(
+            str(self.name), str(self.birthday), str(self.email), '; '.join(str(p) for p in self.phones), str(self.address))
     
     def add_email(self, email):
         self.email = Email(email)
 
     def add_address(self, address):
-        self.email = Address(address)
+        self.address = Address(address)
 
 class AddressBook(UserDict[str, Record]):
     def add_record(self, record: Record):

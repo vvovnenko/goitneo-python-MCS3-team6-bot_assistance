@@ -2,6 +2,7 @@ from notes import Note, NoteBook
 import constant
 from faker import Faker
 from contacts import Record, AddressBook
+import random
 
 
 def populateAddressBook(book: AddressBook, quantity):
@@ -11,8 +12,13 @@ def populateAddressBook(book: AddressBook, quantity):
     for _ in range(quantity):
         record = Record(fake.first_name())
         record.add_phone(str(fake.random_number(digits=10, fix_len=True)))
-        record.add_birthday(fake.date_of_birth(
-            minimum_age=18, maximum_age=50).strftime(constant.DATE_FORMAT))
+        if random.randint(0,1):
+             record.add_birthday(fake.date_of_birth(
+                minimum_age=18, maximum_age=50).strftime(constant.DATE_FORMAT))
+        if random.randint(0,1):
+            record.add_email(fake.email())
+        if random.randint(0,1):
+            record.add_address(fake.address())
         book.add_record(record)
 
 
