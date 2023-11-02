@@ -2,11 +2,13 @@ from command_handler import command
 from storage import storage
 from exceptions import ValidationException, BotSyntaxException, DuplicateException, NotFoundException
 
+
 def get_syntax_error_message(expected_command):
     return f'Incorrect syntax, enter command in the following format: "{expected_command}"'
 
+
 @command(name='add-note')
-def add_note():
+def add_note(args):
     notes = storage.notes
     note = notes.add_note()
     text = input("Enter note text: ")
@@ -61,7 +63,7 @@ def search_notes(args):
         if len(args) < 2:
             raise BotSyntaxException(
                 get_syntax_error_message("search-notes -tag [tag]"))
-        search_tags = args[1:]
+        search_tags = [tag.lstrip('#') for tag in args[1:]]
         result = notes.search_by_tags(search_tags)
     else:
         result = notes.search(args)
@@ -79,5 +81,25 @@ def add_note_tag(args):
             get_syntax_error_message("tag-note [id] [tag]"))
 
     note = notes.find(id)
-    note.add_tag(tag)
-    return f"Tag #{tag} added to note {note.id}"
+    new_tag = note.add_tag(tag)
+    return f"Tag #{new_tag.value} added to note {note.id}"
+
+
+@command(name='untag-note')
+def delete_note_tag(args):
+    notes = storage.notes
+    try:
+        id, tag = args
+    except:
+        raise BotSyntaxException(
+            get_syntax_error_message("untag-note [id] [-all|tag-name]"))
+
+    if tag == "-all":
+        note = notes.find(id)
+        note.delete_all_tags()
+        return f"Deleted all tags from note {note.id}"
+
+    note = notes.find(id)
+    saznitized_tag = tag.lstrip('#')
+    note.delete_tag(saznitized_tag)
+    return f"Tag #{saznitized_tag} deleted from note {note.id}"
