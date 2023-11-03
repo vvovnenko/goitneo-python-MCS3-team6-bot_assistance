@@ -9,6 +9,10 @@ def get_syntax_error_message(expected_command):
 
 @command(name='add-note')
 def add_note(args):
+    """Add note to the NoteBook
+    usage:
+        add-note
+        """
     notes = storage.notes
     note = notes.add_note()
     text = input("Enter note text: ")
@@ -18,6 +22,12 @@ def add_note(args):
 
 @command(name='edit-note')
 def edit_note(args):
+    """Edit existing note
+       usage:
+           edit-note [note-id]
+       arguments:
+           note-id - note identifier
+           """
     notes = storage.notes
     if len(args) == 0:
         raise BotSyntaxException(get_syntax_error_message("edit-note [id]"))
@@ -29,6 +39,12 @@ def edit_note(args):
 
 @command(name='delete-note')
 def delete_note(args):
+    """Delete existing note
+       usage:
+           delete-note [note-id]
+       arguments:
+           note-id - note identifier
+           """
     notes = storage.notes
     if len(args) == 0:
         raise BotSyntaxException(
@@ -40,12 +56,22 @@ def delete_note(args):
 
 @command(name='all-notes')
 def show_notes(args):
+    """Show list of all notes
+       usage:
+           all-notes
+           """
     notes = storage.notes
     return "\n".join([f"{note}" for note in notes.values()])
 
 
 @command(name='note')
 def get_note(args):
+    """Show note
+       usage:
+           note [note-id]
+       arguments:
+           note-id - note identifier
+           """
     notes = storage.notes
     if not args:
         raise BotSyntaxException(get_syntax_error_message("note [id]"))
@@ -55,6 +81,13 @@ def get_note(args):
 
 @command(name='search-notes')
 def search_notes(args):
+    """Search notes by text or tag
+       usage:
+           search-notes [-tag] [search-term]
+       arguments:
+           -tag - search by tag mode (optional)
+           search-term - text/tag to search
+           """
     notes = storage.notes
     if not args:
         raise BotSyntaxException(get_syntax_error_message(
@@ -73,6 +106,13 @@ def search_notes(args):
 
 @command(name='tag-note')
 def add_note_tag(args):
+    """Add tag to note
+       usage:
+           tag-note [note-id] [tag]
+       arguments:
+           note-id - updated note identifier
+           tag - tag to add
+           """
     notes = storage.notes
     try:
         id, tag = args
@@ -87,6 +127,14 @@ def add_note_tag(args):
 
 @command(name='untag-note')
 def delete_note_tag(args):
+    """Remove tag(s) from note
+       usage:
+           untag-note [note-id] [-all|tag-name]
+       arguments:
+           note-id - note to remove tag(s) from
+           -all - remove all tags from note
+           tag-name - remove tag by name
+           """
     notes = storage.notes
     try:
         id, tag = args
