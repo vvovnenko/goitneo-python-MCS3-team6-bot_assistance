@@ -14,7 +14,7 @@ def add_contact(args):
     usage:
         add [contact_name] [phone]
     arguments:
-        contact_name - name off contact
+        contact_name - name of contact
         phone - phone number, 10 digits (example 0991911155)
     """
     contacts = storage.contacts
@@ -39,7 +39,7 @@ def change_contact_phone(args):
     usage:
         change-phone [contact_name] [old_phone] [new_phone]
     arguments:
-        contact_name - name off contact
+        contact_name - name of contact
         old_phone - contact phone number
         new_phone - new contact phone number, 10 digits (example 0991911155)
     """
@@ -60,7 +60,7 @@ def get_phone(args):
     usage:
         phone [contact_name] [phone]
     arguments:
-        contact_name - name off contact
+        contact_name - name of contact
         phone - phone number, 10 digits (example 0991911155)
     """
     contacts = storage.contacts
@@ -76,7 +76,7 @@ def add_birthday(args):
     usage:
         add-birthday [contact_name] [birthdate]
     arguments:
-        contact_name - name off contact
+        contact_name - name of contact
         birthdate - contact birthdate (example 19.07.1999)
     """
     contacts = storage.contacts
@@ -97,7 +97,7 @@ def show_birthday(args):
     usage:
         show-birthday [contact_name]
     arguments:
-        contact_name - name off contact
+        contact_name - name of contact
     """
     contacts = storage.contacts
     if len(args) == 0:
@@ -121,9 +121,11 @@ def remove_contact(args):
     usage:
         del-contact [contact_name]
     arguments:
-        contact_name - name off contact
+        contact_name - name of contact
     """
     contacts = storage.contacts
+    if not args:
+        raise BotSyntaxException(get_syntax_error_message("del-phone [name]"))
     name = args[0]
     record = contacts.find(name)
     if record:
@@ -146,7 +148,8 @@ def search_contacts(args: list):
         raise BotSyntaxException(
             'The search word must consist of at least 2 characters')
 
-    return "\n".join([str(record) for record in contacts.search(word)])
+    result = contacts.search(word)
+    return "\n".join([str(record) for record in result]) if result else "Nothing found."
 
 
 
@@ -180,12 +183,12 @@ def show_birthday_n_days(args):
         print_list = [contact for contact in contacts.values() if contact.days_to_birthday(contact.birthday) == days]
         for item in print_list:
             result += f'{item.name} date born {item.birthday}\n'
-        return result
+        return result if print_list else f'No birthdays in {days} days'
     else:
         return "Invalid input. Please provide a valid number of days."
     
 @command(name='birthdays-by-date')    
-def date_birthday(contacts, *args):
+def date_birthday(args):
     """Show contacts with birthday by date
     usage:
         birthdays-by-date [date]
@@ -216,7 +219,18 @@ def date_birthday(contacts, *args):
     
 @command(name='add-email')
 def add_email(args):
-    name = args[0]
+    """Add contact email
+        usage:
+            add-email [contact_name] [email]
+        arguments:
+            contact_name - name of contact
+            email - valid email address
+        """
+    try:
+        name, email = args
+    except:
+        raise BotSyntaxException(
+            get_syntax_error_message("add-email [name] [email]"))
     contacts = storage.contacts
     found_contact = contacts.find(name)
     if found_contact:
@@ -225,8 +239,19 @@ def add_email(args):
 
 @command(name='add-ad')
 def add_address(args):
-    name = args[0]
-    address = ','.join(args[1:]).strip()
+    """Add contact address
+        usage:
+            add-ad [contact_name] [address]
+        arguments:
+            contact_name - name of contact
+            address - contact address, e.g. "221B Baker Street"
+        """
+    try:
+        name = args[0]
+        address = ','.join(args[1:]).strip()
+    except:
+        raise BotSyntaxException(
+            get_syntax_error_message("add-add [name] [address]"))
     if address:
         record = storage.contacts.find(name)
         if record:
