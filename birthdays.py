@@ -13,7 +13,7 @@ def get_birthdays_per_week(users_list):
 
     for record in [r for r in users_list.values() if r.get_birthday()]:
         birthday_this_year = get_birthday_this_year(
-            today, record.get_birthday())
+            today, record.get_birthday().value)
 
         delta_days = (birthday_this_year - today).days
 
@@ -32,7 +32,7 @@ def get_birthdays_per_week(users_list):
     return congrats_per_day
 
 
-def get_birthday_this_year(today, birthday):
+def get_birthday_this_year(today, birthday: datetime):
     try:
         birthday_this_year = birthday.replace(year=today.year)
     # handle leap year exception
