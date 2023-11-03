@@ -55,7 +55,7 @@ class Note:
 
     def get_trimmed_text(self, text, max_len=10):
         suffix = "..."
-        return text if len(text) <= max_len else text[:max_len-len(suffix)] + suffix
+        return text if len(text) <= max_len else text[:max_len - len(suffix)] + suffix
 
     def add_tag(self, tag):
         tags = [tag.value for tag in self.tags]

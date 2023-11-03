@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 def get_birthdays_per_week(users_list):
     congrats_per_day = {
         "Monday": [],

@@ -47,4 +47,5 @@ class DataStorage:
         self.__book = None
         self.__notes = None
 
+
 storage = DataStorage()

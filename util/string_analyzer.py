@@ -6,11 +6,12 @@ def sanitize_args(func):
         arg1 = sanitize_args(arg1)
         arg2 = sanitize_args(arg2)
         return func(arg1, arg2)
+
     return wrapper
+
 
 @sanitize_args
 def get_similarity_score(input: str, guess: str):
-
     score = 0
 
     if guess.startswith(input) or input.startswith(guess):
@@ -18,7 +19,7 @@ def get_similarity_score(input: str, guess: str):
     elif count_similar_characters(input, guess) >= max(len(input), len(guess)) - 1:
         score += 5
 
-    if score == 0 and (len(input) < len(guess)/3):
+    if score == 0 and (len(input) < len(guess) / 3):
         return score
 
     if is_anagram(input, guess):
