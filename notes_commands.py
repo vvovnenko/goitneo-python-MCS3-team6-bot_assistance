@@ -1,10 +1,6 @@
 from command_handler import command
 from storage import storage
-from exceptions import ValidationException, BotSyntaxException, DuplicateException, NotFoundException
-
-
-def get_syntax_error_message(expected_command):
-    return f'Incorrect syntax, enter command in the following format: "{expected_command}"'
+from exceptions import BotSyntaxException
 
 
 @command(name='add-note')
@@ -30,7 +26,7 @@ def edit_note(args):
            """
     notes = storage.notes
     if len(args) == 0:
-        raise BotSyntaxException(get_syntax_error_message("edit-note [id]"))
+        raise BotSyntaxException()
     note = notes.find(args[0])
     text = input("Enter new text: ")
     note.add_text(text)
@@ -47,8 +43,7 @@ def delete_note(args):
            """
     notes = storage.notes
     if len(args) == 0:
-        raise BotSyntaxException(
-            get_syntax_error_message("delete-note [id]"))
+        raise BotSyntaxException()
     id = args[0]
     notes.delete_note(args[0])
     return f"Note [{id}] deleted."
@@ -74,7 +69,7 @@ def get_note(args):
            """
     notes = storage.notes
     if not args:
-        raise BotSyntaxException(get_syntax_error_message("note [id]"))
+        raise BotSyntaxException()
     note = notes.find(args[0])
     return f"id: {note.id}\ntext: {note.text}"
 
@@ -90,12 +85,10 @@ def search_notes(args):
            """
     notes = storage.notes
     if not args:
-        raise BotSyntaxException(get_syntax_error_message(
-            "search-notes [search-string]"))
+        raise BotSyntaxException()
     if args[0] == '-tag':
         if len(args) < 2:
-            raise BotSyntaxException(
-                get_syntax_error_message("search-notes -tag [tag]"))
+            raise BotSyntaxException()
         search_tags = [tag.lstrip('#') for tag in args[1:]]
         result = notes.search_by_tags(search_tags)
     else:
@@ -117,8 +110,7 @@ def add_note_tag(args):
     try:
         id, tag = args
     except:
-        raise BotSyntaxException(
-            get_syntax_error_message("tag-note [id] [tag]"))
+        raise BotSyntaxException()
 
     note = notes.find(id)
     new_tag = note.add_tag(tag)
@@ -138,9 +130,8 @@ def delete_note_tag(args):
     notes = storage.notes
     try:
         id, tag = args
-    except:
-        raise BotSyntaxException(
-            get_syntax_error_message("untag-note [id] [-all|tag-name]"))
+    except Exception:
+        raise BotSyntaxException()
 
     if tag == "-all":
         note = notes.find(id)

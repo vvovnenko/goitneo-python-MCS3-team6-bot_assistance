@@ -6,10 +6,6 @@ from datetime import date, datetime
 from constant import DATE_FORMAT
 
 
-def get_syntax_error_message(expected_command):
-    return f'Incorrect syntax, enter command in the following format: "{expected_command}"'
-
-
 @command(name='add')
 def add_contact(args):
     """Create new contact in the book with a phone, or add a phone to existent  
@@ -22,9 +18,8 @@ def add_contact(args):
     contacts = storage.contacts
     try:
         name, phone = args
-    except:
-        raise BotSyntaxException(
-            get_syntax_error_message("add [name] [phone]"))
+    except Exception:
+        raise BotSyntaxException()
     try:
         existing_record = contacts.find(name)
         existing_record.add_phone(phone)
@@ -48,9 +43,8 @@ def change_contact_phone(args):
     contacts = storage.contacts
     try:
         name, old_phone, new_phone = args
-    except:
-        raise BotSyntaxException(
-            get_syntax_error_message("change [name] [old_phone] [new_phone]"))
+    except Exception:
+        raise BotSyntaxException()
     found_contact = contacts.find(name)
     if found_contact:
         found_contact.edit_phone(old_phone, new_phone)
@@ -68,7 +62,7 @@ def get_phone(args):
     """
     contacts = storage.contacts
     if len(args) == 0:
-        raise BotSyntaxException(get_syntax_error_message("phone [name]"))
+        raise BotSyntaxException()
 
     return "; ".join(map(str, contacts.find(args[0]).phones))
 
@@ -85,9 +79,8 @@ def add_birthday(args):
     contacts = storage.contacts
     try:
         name, birthday = args
-    except:
-        raise BotSyntaxException(
-            get_syntax_error_message("add-birthday [name] [birthday]"))
+    except Exception:
+        raise BotSyntaxException()
     found_contact = contacts.find(name)
     if found_contact:
         found_contact.add_birthday(birthday)
@@ -104,8 +97,7 @@ def show_birthday(args):
     """
     contacts = storage.contacts
     if len(args) == 0:
-        raise BotSyntaxException(
-            get_syntax_error_message("show-birthday [name]"))
+        raise BotSyntaxException()
     return contacts.find(args[0]).get_birthday()
 
 
@@ -129,7 +121,7 @@ def remove_contact(args):
     """
     contacts = storage.contacts
     if not args:
-        raise BotSyntaxException(get_syntax_error_message("del-phone [name]"))
+        raise BotSyntaxException()
     name = args[0]
     record = contacts.find(name)
     if record:
@@ -150,8 +142,7 @@ def search_contacts(args: list):
     contacts = storage.contacts
     word, = args
     if len(word) < 2:
-        raise BotSyntaxException(
-            'The search word must consist of at least 2 characters')
+        raise BotSyntaxException()
 
     result = contacts.search(word)
     return "\n".join([str(record) for record in result]) if result else "Nothing found."
@@ -235,9 +226,8 @@ def add_email(args):
         """
     try:
         name, email = args
-    except:
-        raise BotSyntaxException(
-            get_syntax_error_message("add-email [name] [email]"))
+    except Exception:
+        raise BotSyntaxException()
     contacts = storage.contacts
     found_contact = contacts.find(name)
     if found_contact:
@@ -257,15 +247,14 @@ def add_address(args):
     try:
         name = args[0]
         address = ','.join(args[1:]).strip()
-    except:
-        raise BotSyntaxException(
-            get_syntax_error_message("add-add [name] [address]"))
+    except Exception:
+        raise BotSyntaxException()
     if address:
         record = storage.contacts.find(name)
         if record:
             record.add_address(address)
             return f"Address added to contact {name}"
         else:
-            raise BotSyntaxException(get_syntax_error_message("not contact"))
+            raise BotSyntaxException()
     else:
-        raise BotSyntaxException("Invalid address format")
+        raise BotSyntaxException()

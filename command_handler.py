@@ -1,7 +1,7 @@
 import functools
 import types
-from exceptions import ValidationException, BotSyntaxException, DuplicateException, NotFoundException, ExitProgram, \
-    InvalidCommandError
+from exceptions import ValidationException, BotSyntaxException, \
+    DuplicateException, NotFoundException, ExitProgram, InvalidCommandError
 from util.string_analyzer import get_similarity_score
 
 COMMANDS = dict[str, types.FunctionType]()
@@ -106,5 +106,5 @@ def execute_command(command: str, args: list[str]):
         return get_handler(command)(args)
     except InvalidCommandError:
         return create_invalid_command_response(command)
-    except (TypeError, ValueError, KeyError):
-        return f'Command syntax error. Run help {command}'
+    except (BotSyntaxException, TypeError, ValueError, KeyError):
+        return f'Command syntax error. Run "help {command}"'
