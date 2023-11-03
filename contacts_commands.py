@@ -10,7 +10,13 @@ def get_syntax_error_message(expected_command):
 
 @command(name='add')
 def add_contact(args):
-    """Add new contact into book: add Charly 1234567890"""
+    """Create new contact in the book with a phone, or add a phone to existent  
+    usage:
+        add [contact_name] [phone]
+    arguments:
+        contact_name - name off contact
+        phone - phone number, 10 digits (example 0991911155)
+    """
     contacts = storage.contacts
     try:
         name, phone = args
@@ -27,9 +33,16 @@ def add_contact(args):
     return "Contact added."
 
 
-@command(name='change')
-def change_contact(args):
-    """Add new contacts phone: change Charly 1234567890"""
+@command(name='change-phone')
+def change_contact_phone(args):
+    """Change contact phone
+    usage:
+        change-phone [contact_name] [old_phone] [new_phone]
+    arguments:
+        contact_name - name off contact
+        old_phone - contact phone number
+        new_phone - new contact phone number, 10 digits (example 0991911155)
+    """
     contacts = storage.contacts
     try:
         name, old_phone, new_phone = args
@@ -41,10 +54,15 @@ def change_contact(args):
         found_contact.edit_phone(old_phone, new_phone)
         return "Contact changed."
 
-
 @command(name='phone')
 def get_phone(args):
-    """Show contacts phone: phone Charly 1234567890"""
+    """Show contact phone
+    usage:
+        phone [contact_name] [phone]
+    arguments:
+        contact_name - name off contact
+        phone - phone number, 10 digits (example 0991911155)
+    """
     contacts = storage.contacts
     if len(args) == 0:
         raise BotSyntaxException(get_syntax_error_message("phone [name]"))
@@ -54,7 +72,13 @@ def get_phone(args):
 
 @command(name='add-birthday')
 def add_birthday(args):
-    """Add contacts birthday: add-birthday Charly 19.07.1999"""
+    """Add contact birthday
+    usage:
+        add-birthday [contact_name] [birthdate]
+    arguments:
+        contact_name - name off contact
+        birthdate - contact birthdate (example 19.07.1999)
+    """
     contacts = storage.contacts
     try:
         name, birthday = args
@@ -69,7 +93,12 @@ def add_birthday(args):
 
 @command(name='show-birthday')
 def show_birthday(args):
-    """Show contacts birthday: show-birthday Charly 19.07.1999"""
+    """Show contact birthday
+    usage:
+        show-birthday [contact_name]
+    arguments:
+        contact_name - name off contact
+    """
     contacts = storage.contacts
     if len(args) == 0:
         raise BotSyntaxException(
@@ -77,28 +106,23 @@ def show_birthday(args):
     return contacts.find(args[0]).get_birthday()
 
 
-@command(name='birthdays')
-def show_birthdays_next_week(args):
-    """Show all birthdays in a week period: birthdays"""
-    contacts = storage.contacts
-    birthdays_per_weekday = contacts.get_birthdays_per_week()
-    result = []
-    for weekday, contacts in birthdays_per_weekday.items():
-        names = ', '.join(contact.name.value for contact in contacts)
-        result.append(f"{weekday}: {names}")
-
-    return "\n".join(result)
-
-
-@command(name='all')
+@command(name='all-contacts')
 def show_all_contacts(args):
-    """Show all contacts"""
+    """Show all contacts
+    usage:
+        all-contacts
+    """
     contacts = storage.contacts
     return "\n".join([f"{record}" for record in contacts.values()])
 
-@command(name='del')
+@command(name='del-contact')
 def remove_contact(args):
-    """Delete contact"""
+    """Delete contact
+    usage:
+        del-contact [contact_name]
+    arguments:
+        contact_name - name off contact
+    """
     contacts = storage.contacts
     name = args[0]
     record = contacts.find(name)
@@ -108,9 +132,14 @@ def remove_contact(args):
     else:
         raise KeyError
 
-@command('search')
+@command('search-contact')
 def search_contacts(args: list):
-    """Search contacts on all the fields"""
+    """Search contacts on all the fields
+    usage:
+        search-contact [word]
+    arguments:
+        word - search word min 2 characters length
+    """
     contacts = storage.contacts
     word, = args
     if len(word) < 2:
@@ -119,8 +148,31 @@ def search_contacts(args: list):
 
     return "\n".join([str(record) for record in contacts.search(word)])
 
-@command(name='bd')
+
+
+@command(name='birthdays')
+def show_birthdays_next_week(args):
+    """Show all birthdays in a week period
+    usage:
+        birthdays
+    """
+    contacts = storage.contacts
+    birthdays_per_weekday = contacts.get_birthdays_per_week()
+    result = []
+    for weekday, contacts in birthdays_per_weekday.items():
+        names = ', '.join(contact.name.value for contact in contacts)
+        result.append(f"{weekday}: {names}")
+
+    return "\n".join(result)
+
+@command(name='birthdays-in-days')
 def show_birthday_n_days(args):
+    """Show contacts with birthday in N days
+    usage:
+        birthdays-in-days [days]
+    arguments:
+        days - number of days
+    """
     contacts = storage.contacts
     if args and args[0].isdigit():
         days = int(args[0])
@@ -132,8 +184,14 @@ def show_birthday_n_days(args):
     else:
         return "Invalid input. Please provide a valid number of days."
     
-@command(name='bdate')    
+@command(name='birthdays-by-date')    
 def date_birthday(contacts, *args):
+    """Show contacts with birthday by date
+    usage:
+        birthdays-by-date [date]
+    arguments:
+        date - a date in 'DD.MM' format (example 02.11)
+    """
     contacts = storage.contacts
     if len(args) < 1:
         return "Invalid input. Please provide a specific date."

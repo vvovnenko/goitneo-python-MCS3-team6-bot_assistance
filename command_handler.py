@@ -5,6 +5,35 @@ from util.string_analyzer import get_similarity_score
 
 COMMANDS = dict[str, types.FunctionType]()
 
+def create_invalid_command_response(command: str) -> str:
+        guessed_command = find_similar_command(command)
+        response = f"'{command}' is not a bot-helper command. See 'help'."
+        if guessed_command:
+            response += "\n    " + f"did you mean '{guessed_command}' ?"
+        return response
+
+def find_similar_command(command: str) -> str:
+    similar_commands = dict()
+    for guessed_command in COMMANDS.keys():
+        score = get_similarity_score(command, guessed_command)
+        if score > 0:
+            similar_commands[score] = guessed_command
+    return similar_commands[max(similar_commands.keys())] if similar_commands else None
+
+def create_command_doc(command_name:str) -> str:
+    command = COMMANDS.get(command_name, None)
+    if command is None:
+        return create_invalid_command_response(command_name)
+    else:
+        return command.__doc__
+
+def create_command_description(command_name:str) -> str:
+    command = COMMANDS.get(command_name, None)
+    if command is None:
+        return ''
+    else:
+        return command.__doc__.split('\n')[0] if command.__doc__ else '-'
+
 
 def get_handler(command: str):
     handler = COMMANDS.get(command)
@@ -48,10 +77,18 @@ def exit(*args, **kwargs):
 
 @command(name='help')
 def help(args):
-    '''Show info about all commands'''
+    """Show info about all commands
+    usage:
+        help [command_name]
+    arguments:
+        command_name - name of the comand (optional)
+    """
+    if len(args) > 0:
+        return '\n' + create_command_doc(args[0])
+
     lines = []
-    for command, func in COMMANDS.items():
-        lines.append('{:<20}:\t{}'.format(command, func.__doc__))
+    for command in COMMANDS.keys():
+        lines.append('{:<20}:\t{}'.format(command, create_command_description(command)))
     return '\n'.join(lines)
 
 
@@ -60,17 +97,6 @@ def execute_command(command: str, args: list[str]):
     try:
         return get_handler(command)(args)
     except InvalidCommandError:
-        guessed_command = find_similar_command(command)
-        response = f"'{command}' is not a bot-helper command. See 'help'."
-        if guessed_command:
-            response += "\n    " + f"did you mean '{guessed_command}' ?"
-        return response
-
-
-def find_similar_command(command: str) -> str:
-    similar_commands = dict()
-    for guessed_command in COMMANDS.keys():
-        score = get_similarity_score(command, guessed_command)
-        if score > 0:
-            similar_commands[score] = guessed_command
-    return similar_commands[max(similar_commands.keys())] if similar_commands else None
+        return create_invalid_command_response(command)
+    except (TypeError, ValueError, KeyError):
+        return f'Command syntax error. Run help {command}'
