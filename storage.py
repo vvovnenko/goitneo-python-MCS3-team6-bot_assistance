@@ -1,3 +1,4 @@
+import os
 import pickle
 import constant
 from util.data_generator import populateAddressBook, populateNotes
@@ -7,7 +8,7 @@ from notes import NoteBook
 
 class DataStorage:
     def __init__(self):
-        self.filename = constant.FILE_STORAGE
+        self.storage_path = self.build_file_path()
         self.__book = None
         self.__notes = None
 
@@ -19,9 +20,16 @@ class DataStorage:
     def notes(self) -> NoteBook:
         return self.__notes
 
+    @staticmethod
+    def build_file_path():
+        data_dir = os.path.join(constant.STORAGE_PATH)
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir)
+        return os.path.join(os.path.dirname(__file__), data_dir, constant.STORAGE_FILE_NAME)
+
     def __enter__(self) -> None:
         try:
-            with open(self.filename, "rb") as fh:
+            with open(self.storage_path, "rb") as fh:
                 self.__book, self.__notes = pickle.load(fh)
         except FileNotFoundError:
             pass
@@ -34,7 +42,7 @@ class DataStorage:
             populateNotes(self.__notes, 100)
 
     def __exit__(self, exception_type, exception_value, traceback):
-        with open(self.filename, "wb") as fh:
+        with open(self.storage_path, "wb+") as fh:
             pickle.dump([self.__book, self.__notes], fh)
         self.__book = None
         self.__notes = None
