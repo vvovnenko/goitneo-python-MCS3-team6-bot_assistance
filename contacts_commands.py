@@ -5,8 +5,10 @@ from exceptions import BotSyntaxException, NotFoundException
 from datetime import date, datetime
 from constant import DATE_FORMAT
 
+
 def get_syntax_error_message(expected_command):
     return f'Incorrect syntax, enter command in the following format: "{expected_command}"'
+
 
 @command(name='add')
 def add_contact(args):
@@ -53,6 +55,7 @@ def change_contact_phone(args):
     if found_contact:
         found_contact.edit_phone(old_phone, new_phone)
         return "Contact changed."
+
 
 @command(name='phone')
 def get_phone(args):
@@ -115,6 +118,7 @@ def show_all_contacts(args):
     contacts = storage.contacts
     return "\n".join([f"{record}" for record in contacts.values()])
 
+
 @command(name='del-contact')
 def remove_contact(args):
     """Delete contact
@@ -134,6 +138,7 @@ def remove_contact(args):
     else:
         raise KeyError
 
+
 @command('search-contact')
 def search_contacts(args: list):
     """Search contacts on all the fields
@@ -152,7 +157,6 @@ def search_contacts(args: list):
     return "\n".join([str(record) for record in result]) if result else "Nothing found."
 
 
-
 @command(name='birthdays')
 def show_birthdays_next_week(args):
     """Show all birthdays in a week period
@@ -167,6 +171,7 @@ def show_birthdays_next_week(args):
         result.append(f"{weekday}: {names}")
 
     return "\n".join(result)
+
 
 @command(name='birthdays-in-days')
 def show_birthday_n_days(args):
@@ -186,8 +191,9 @@ def show_birthday_n_days(args):
         return result if print_list else f'No birthdays in {days} days'
     else:
         return "Invalid input. Please provide a valid number of days."
-    
-@command(name='birthdays-by-date')    
+
+
+@command(name='birthdays-by-date')
 def date_birthday(args):
     """Show contacts with birthday by date
     usage:
@@ -204,10 +210,10 @@ def date_birthday(args):
     except ValueError:
         return "Invalid date format. Please provide a date in 'DD.MM' format."
 
-    birthday_contacts =[
+    birthday_contacts = [
         contact for contact in contacts.values() if contact.birthday and
-        contact.birthday.value.day == specific_date.day and
-        contact.birthday.value.month == specific_date.month]
+                                                    contact.birthday.value.day == specific_date.day and
+                                                    contact.birthday.value.month == specific_date.month]
 
     if birthday_contacts:
         result = f"List of contacts with birthday on {specific_date}:\n"
@@ -216,7 +222,8 @@ def date_birthday(args):
         return result
     else:
         return f"No contacts with birthday on {specific_date}."
-    
+
+
 @command(name='add-email')
 def add_email(args):
     """Add contact email
@@ -236,6 +243,7 @@ def add_email(args):
     if found_contact:
         found_contact.add_email(email)
         return "Email added."
+
 
 @command(name='add-ad')
 def add_address(args):

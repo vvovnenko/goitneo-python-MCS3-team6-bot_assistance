@@ -12,7 +12,7 @@ class Field:
 
     def __str__(self):
         return str(self.value)
-    
+
     def contains_word(self, word: str) -> bool:
         return str(self).lower().find(word.lower()) >= 0
 
@@ -59,6 +59,7 @@ class Phone(Field):
                 f"Phone must contain {constant.PHONE_LEN} digits")
         self._value = new_value
 
+
 class Email(Field):
     def __init__(self, email):
         super().__init__(email)
@@ -66,15 +67,15 @@ class Email(Field):
     @property
     def value(self):
         return self._value
-    
+
     @value.setter
     def value(self, email):
         pattern = r'[a-zA-Z]{1}[\w\.]+@[a-zA-Z]+\.[a-zA-Z]{2,}'
         if not re.match(pattern, email):
             raise ValidationException("Invalid email address.")
         self._value = email
-        
-       
+
+
 class Address(Field):
     def __init__(self, address):
         super().__init__(address)
@@ -82,13 +83,12 @@ class Address(Field):
     @property
     def value(self):
         return self._value
-    
+
     @value.setter
     def value(self, address):
         if (len(address)) < 3:
             raise ValidationException("Invalid address.")
         self._value = address
-
 
 
 class Record:
@@ -133,14 +133,15 @@ class Record:
 
     def __str__(self):
         return "Contact name: {:15} | Birthday: {:10} | Email: {:25} | Phones: {} | Address: {}".format(
-            str(self.name), str(self.birthday), str(self.email), '; '.join(str(p) for p in self.phones), str(self.address))
-    
+            str(self.name), str(self.birthday), str(self.email), '; '.join(str(p) for p in self.phones),
+            str(self.address))
+
     def add_email(self, email):
         self.email = Email(email)
 
     def add_address(self, address):
         self.address = Address(address)
-        
+
     def days_to_birthday(self, birthday: Birthday):
         if self.birthday:
             this_day = date.today()
@@ -150,6 +151,7 @@ class Record:
             return (birthday_day - this_day).days
         else:
             return None
+
 
 class AddressBook(UserDict[str, Record]):
     def add_record(self, record: Record):
@@ -167,7 +169,7 @@ class AddressBook(UserDict[str, Record]):
 
     def get_birthdays_per_week(self):
         return get_birthdays_per_week(self.data)
-    
+
     def search(self, word: str):
         found_records = list()
         for item in self.data.values():
@@ -176,4 +178,3 @@ class AddressBook(UserDict[str, Record]):
                     found_records.append(item)
                     break
         return found_records
-            

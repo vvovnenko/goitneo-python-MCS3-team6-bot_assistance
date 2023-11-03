@@ -15,6 +15,7 @@ def parse_input(user_input):
     cmd = cmd.strip().lower()
     return cmd, *args
 
+
 def start_bot():
     print("Welcome to the assistant bot!")
     while True:

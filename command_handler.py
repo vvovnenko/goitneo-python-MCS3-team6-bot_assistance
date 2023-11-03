@@ -1,16 +1,19 @@
 import functools
 import types
-from exceptions import ValidationException, BotSyntaxException, DuplicateException, NotFoundException, ExitProgram, InvalidCommandError
+from exceptions import ValidationException, BotSyntaxException, DuplicateException, NotFoundException, ExitProgram, \
+    InvalidCommandError
 from util.string_analyzer import get_similarity_score
 
 COMMANDS = dict[str, types.FunctionType]()
 
+
 def create_invalid_command_response(command: str) -> str:
-        guessed_command = find_similar_command(command)
-        response = f"'{command}' is not a bot-helper command. See 'help'."
-        if guessed_command:
-            response += "\n    " + f"did you mean '{guessed_command}' ?"
-        return response
+    guessed_command = find_similar_command(command)
+    response = f"'{command}' is not a bot-helper command. See 'help'."
+    if guessed_command:
+        response += "\n    " + f"did you mean '{guessed_command}' ?"
+    return response
+
 
 def find_similar_command(command: str) -> str:
     similar_commands = dict()
@@ -20,14 +23,16 @@ def find_similar_command(command: str) -> str:
             similar_commands[score] = guessed_command
     return similar_commands[max(similar_commands.keys())] if similar_commands else None
 
-def create_command_doc(command_name:str) -> str:
+
+def create_command_doc(command_name: str) -> str:
     command = COMMANDS.get(command_name, None)
     if command is None:
         return create_invalid_command_response(command_name)
     else:
         return command.__doc__
 
-def create_command_description(command_name:str) -> str:
+
+def create_command_description(command_name: str) -> str:
     command = COMMANDS.get(command_name, None)
     if command is None:
         return ''
@@ -44,9 +49,11 @@ def get_handler(command: str):
 
 def command(name):
     """Register a function as a plug-in"""
+
     def register_command(func):
         COMMANDS[name] = func
         return func
+
     return register_command
 
 
@@ -59,6 +66,7 @@ def input_error(func):
             return e
         except BotSyntaxException as e:
             return e
+
     return inner
 
 
