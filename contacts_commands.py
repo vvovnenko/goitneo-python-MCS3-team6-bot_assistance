@@ -213,3 +213,26 @@ def date_birthday(contacts, *args):
         return result
     else:
         return f"No contacts with birthday on {specific_date}."
+    
+@command(name='add-email')
+def add_email(args):
+    name = args[0]
+    contacts = storage.contacts
+    found_contact = contacts.find(name)
+    if found_contact:
+        found_contact.add_email(email)
+        return "Email added."
+
+@command(name='add-ad')
+def add_address(args):
+    name = args[0]
+    address = ','.join(args[1:]).strip()
+    if address:
+        record = storage.contacts.find(name)
+        if record:
+            record.add_address(address)
+            return f"Address added to contact {name}"
+        else:
+            raise BotSyntaxException(get_syntax_error_message("not contact"))
+    else:
+        raise BotSyntaxException("Invalid address format")
