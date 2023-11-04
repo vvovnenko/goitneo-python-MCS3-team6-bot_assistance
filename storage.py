@@ -36,10 +36,10 @@ class DataStorage:
 
         if not isinstance(self.__book, AddressBook):
             self.__book = AddressBook()
-            populateAddressBook(self.__book, 100)
+            populateAddressBook(self.__book, 10)
         if not isinstance(self.__notes, NoteBook):
             self.__notes = NoteBook()
-            populateNotes(self.__notes, 100)
+            populateNotes(self.__notes, 50)
 
     def __exit__(self, exception_type, exception_value, traceback):
         with open(self.storage_path, "wb+") as fh:
