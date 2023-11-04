@@ -1,8 +1,8 @@
 import functools
 import types
-from exceptions import ValidationException, BotSyntaxException, \
+from app.exceptions import ValidationException, BotSyntaxException, \
     DuplicateException, NotFoundException, ExitProgram, InvalidCommandError
-from util.string_utils import get_similarity_score
+from app.util.string_utils import get_similarity_score
 
 COMMANDS = dict[str, types.FunctionType]()
 

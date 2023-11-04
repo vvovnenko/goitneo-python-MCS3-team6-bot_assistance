@@ -1,9 +1,9 @@
-import os
 import pickle
-import constant
-from util.data_generator import populateAddressBook, populateNotes
-from contacts import AddressBook
-from notes import NoteBook
+from app import constant
+from app.util.data_generator import populateAddressBook, populateNotes
+from app.contacts import AddressBook
+from app.notes import NoteBook
+from pathlib import Path
 
 
 class DataStorage:
@@ -22,10 +22,11 @@ class DataStorage:
 
     @staticmethod
     def build_file_path():
-        data_dir = os.path.join(constant.STORAGE_PATH)
-        if not os.path.exists(data_dir):
-            os.makedirs(data_dir)
-        return os.path.join(os.path.dirname(__file__), data_dir, constant.STORAGE_FILE_NAME)
+        root_dir = Path.cwd() / constant.STORAGE_PATH
+        if not root_dir.exists():
+            root_dir.mkdir()
+        storage_file = root_dir / constant.STORAGE_FILE_NAME
+        return str(storage_file)
 
     def __enter__(self) -> None:
         try:

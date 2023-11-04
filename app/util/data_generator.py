@@ -1,7 +1,7 @@
-from notes import Note, NoteBook
-import constant
+from app.notes import Note, NoteBook
+from app import constant
 from faker import Faker
-from contacts import Record, AddressBook
+from app.contacts import Record, AddressBook
 import random
 
 

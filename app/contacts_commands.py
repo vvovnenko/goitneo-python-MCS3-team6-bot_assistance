@@ -1,9 +1,9 @@
-from command_handler import command
-from contacts import Record
-from storage import storage
-from exceptions import BotSyntaxException, NotFoundException
+from app.command_handler import command
+from app.contacts import Record
+from app.storage import storage
+from app.exceptions import BotSyntaxException, NotFoundException
 from datetime import date, datetime
-from constant import DATE_FORMAT
+from app.constant import DATE_FORMAT
 
 
 @command(name='add')
