@@ -1,7 +1,7 @@
-from command_handler import command
-from storage import storage
-from exceptions import BotSyntaxException
-from util.string_utils import get_divider
+from app.command_handler import command
+from app.storage import storage
+from app.exceptions import BotSyntaxException
+from app.util.string_utils import get_divider
 
 
 @command(name='add-note')

@@ -3,4 +3,4 @@ PHONE_LEN = 10
 TAG_LEN = 3
 NOTE_TEXT_LEN = 3
 STORAGE_FILE_NAME = "storage.bin"
-STORAGE_PATH = "data"
+STORAGE_PATH = "var"

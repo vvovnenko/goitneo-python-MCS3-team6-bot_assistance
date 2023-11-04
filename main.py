@@ -1,10 +1,9 @@
-from storage import storage
-from exceptions import ExitProgram
-from command_handler import execute_command
+from app.storage import storage
+from app.exceptions import ExitProgram
+from app.command_handler import execute_command
 from importlib import import_module
-
-import_module('contacts_commands')
-import_module('notes_commands')
+import_module('.contacts_commands', 'app')
+import_module('.notes_commands', 'app')
 
 
 def parse_input(user_input):
@@ -31,7 +30,7 @@ def start_bot():
 
 def print_welcome():
     try:
-        with open("data/welcome.txt", 'r') as f:
+        with open("app/data/welcome.txt", 'r') as f:
             print(f.read())
     except:
         pass
