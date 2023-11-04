@@ -2,14 +2,30 @@
 ## MCS3-C4-bot_assistant
 
 ## Address Book and NoteBook Bot
-`This is a simple assistant bot that can be used to manage contacts and notes.`
+This is a simple assistant bot that can be used to manage contacts and notes.
+
+### Features
+
+* Add, edit, and delete contacts data such as: name, list of phones, email, birthday and address
+* Search contacts by all fields
+* View contacts birthdays:
+  * by concrete date
+  * next weak
+  * in N days
+* Add, edit, delete and tag notes
+* Search notes by text and tags
+* View all contacts and notes
+* `help` command can list all commands and show syntax for concrete command
+* Smart command suggestion for wrong input
+* Store contacts and notes in the file storage on disk
+* Generation of random data for contacts and notes on first launch
 
 
-## Required dependencies
+## Requirements
 
-- pip3
-- Faker
-- python 3.11
+- Python 3.11 or higher
+- pip
+- [Faker](https://pypi.org/project/Faker/)
 
 
 ## Usage
@@ -21,51 +37,93 @@ To start the bot, run the following command:
 
 ## Address Book Commands
 
-- Create a new contact in the address book with a phone, or add a phone to an existing contact. 
+Create a new contact in the address book with a phone, or add a phone to an existing contact. 
+```
 > add [contact_name] [phone]
-- Change contact phone number.
+```
+Change contact phone number.
+```
 > change-phone [contact_name] [old_phone] [new_phone]
-- Show contact phone number.
+```
+Show contact phone number.
+```
 > phone [contact_name]
-- Add contact birthday.
+```
+Add contact birthday.
+```
 > add-birthday [contact_name] [birthdate]
-- Show contact birthday.
+```
+Show contact birthday.
+```
 > show-birthday [contact_name]
-- Show all contacts.
+```
+Show all contacts.
+```
 > all-contacts
-- Delete contact.
+```
+Delete contact.
+```
 > del-contact [contact_name]
-- Search contacts on all fields.
+```
+Search contacts on all fields.
+```
 > search-contact [word]
-- Show all birthdays in the next week period.
+```
+Show all birthdays in the next week period.
+```
 > birthdays
-- Show contacts with a birthday in N days.
+```
+Show contacts with a birthday in N days.
+```
 > birthdays-in-days [days]
-- Show contacts with a birthday on a specific date.
+```
+Show contacts with a birthday on a specific date.
+```
 > birthdays-by-date [date]
-- Add email to a contact.
+```
+Add email to a contact.
+```
 > add-email [contact_name] [email]
-- Add address to a contact.
+```
+Add address to a contact.
+```
 > add-ad [contact_name] [address]
+```
 
 ## NoteBook Commands
 
-- Add a note to the NoteBook.
+Add a note to the NoteBook.
+```
 > add-note
-- Edit an existing note.
+```
+Edit an existing note.
+```
 > edit-note [note-id]
-- Delete an existing note.
+```
+Delete an existing note.
+```
 > delete-note [note-id]
-- Show a list of all notes.
+```
+Show a list of all notes.
+```
 > all-notes
-- Show a specific note.
+```
+Show a specific note.
+```
 > note [note-id]
-- Search notes by text or tag.
+```
+Search notes by text or tag.
+```
 > search-notes [-tag] [search-term]
-- Add a tag to a note.
+```
+Add a tag to a note.
+```
 > tag-note [note-id] [tag]
-- Remove tag(s) from a note.
+```
+Remove tag(s) from a note.
+```
 > untag-note [note-id] [-all|tag-name]
+```
 
 
 ## Help
@@ -101,4 +159,4 @@ This will display detailed information about the specified command, including it
 # Displays detailed information about the `phone` command
 ```
 
-## Please make sure to follow the specified syntax for each command. For further assistance, use the help command followed by the specific command name.
+*Please make sure to follow the specified syntax for each command. For further assistance, use the help command followed by the specific command name.*
