@@ -4,7 +4,6 @@ from storage import storage
 from exceptions import BotSyntaxException, NotFoundException
 from datetime import date, datetime
 from constant import DATE_FORMAT
-from util.string_utils import get_divider
 
 
 @command(name='add')
@@ -110,7 +109,7 @@ def show_all_contacts(args):
     """
     contacts = storage.contacts
 
-    return get_divider().join([f"{record}" for record in contacts.values()])
+    return ''.join([f"{record}" for record in contacts.values()])
 
 
 @command(name='del-contact')
@@ -133,11 +132,11 @@ def remove_contact(args):
         raise KeyError
 
 
-@command('search-contact')
+@command('search-contacts')
 def search_contacts(args: list):
     """Search contacts on all the fields
     usage:
-        search-contact [word]
+        search-contacts [word]
     arguments:
         word - search word min 2 characters length
     """
@@ -147,7 +146,7 @@ def search_contacts(args: list):
         raise BotSyntaxException()
 
     result = contacts.search(word)
-    return "\n".join([str(record) for record in result]) if result else "Nothing found."
+    return "".join([str(record) for record in result]) if result else "Nothing found."
 
 
 @command(name='birthdays')
@@ -248,7 +247,7 @@ def add_address(args):
         """
     try:
         name = args[0]
-        address = ','.join(args[1:]).strip()
+        address = ' '.join(args[1:]).strip()
     except Exception:
         raise BotSyntaxException()
     if address:

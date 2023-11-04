@@ -67,7 +67,7 @@ Delete contact.
 ```
 Search contacts on all fields.
 ```
-> search-contact [word]
+> search-contacts [word]
 ```
 Show all birthdays in the next week period.
 ```

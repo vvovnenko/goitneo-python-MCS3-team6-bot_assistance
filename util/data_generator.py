@@ -18,7 +18,7 @@ def populateAddressBook(book: AddressBook, quantity):
         if random.randint(0, 1):
             record.add_email(fake.email())
         if random.randint(0, 1):
-            record.add_address(fake.address())
+            record.add_address(fake.street_address() + ', ' + fake.city())
         book.add_record(record)
 
 

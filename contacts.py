@@ -1,6 +1,6 @@
 import constant
 from collections import UserDict
-from exceptions import ValidationException, DuplicateException, NotFoundException, NotFoundException
+from exceptions import ValidationException, DuplicateException, NotFoundException
 from datetime import date, datetime
 from birthdays import get_birthdays_per_week
 import re
@@ -132,9 +132,14 @@ class Record:
         return filter(lambda f: f is not None, fields)
 
     def __str__(self):
-        return "Contact name: {:15} | Birthday: {:10} | Email: {:25} | Phones: {} | Address: {}".format(
-            str(self.name), str(self.birthday), str(self.email), '; '.join(str(p) for p in self.phones),
-            str(self.address))
+        divider = '\n' + ('-' * 108) + '\n'
+        lines = [
+            "| Name: {:20} | Birthday: {:10} | Email: {:45} |".format(
+                str(self.name), str(self.birthday), str(self.email)),
+            "| Phones: {:96} |".format('; '.join(str(p) for p in self.phones)),
+            "| Address: {:95} |".format(str(self.address)),
+        ]
+        return divider + divider.join(lines) + divider
 
     def add_email(self, email):
         self.email = Email(email)
