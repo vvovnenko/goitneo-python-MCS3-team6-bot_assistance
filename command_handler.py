@@ -15,6 +15,15 @@ def create_invalid_command_response(command: str) -> str:
     return response
 
 
+def get_syntax_error_msg(command: str) -> str:
+    red = "\033[91m"
+    yellow = "\033[93m"
+    end_color = "\033[0m"
+    command_doc = create_command_doc(command) if COMMANDS.get(command) else f'Run "help {command}"'
+    error_message = f"{red}Command syntax error. Reference:{end_color}\n"
+    return error_message + yellow + command_doc + end_color
+
+
 def find_similar_command(command: str) -> str:
     similar_commands = dict()
     for guessed_command in COMMANDS.keys():
@@ -107,4 +116,5 @@ def execute_command(command: str, args: list[str]):
     except InvalidCommandError:
         return create_invalid_command_response(command)
     except (BotSyntaxException, TypeError, ValueError, KeyError):
-        return f'Command syntax error. Run "help {command}"'
+        return get_syntax_error_msg(command)
+
