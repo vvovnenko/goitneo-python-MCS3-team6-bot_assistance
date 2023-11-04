@@ -17,7 +17,7 @@ def parse_input(user_input):
 
 
 def start_bot():
-    print("Welcome to the assistant bot!")
+    print_welcome()
     while True:
         user_input = input("Enter a command: ")
         command, *args = parse_input(user_input)
@@ -27,6 +27,16 @@ def start_bot():
         except ExitProgram as e:
             print(str(e))
             break
+
+
+def print_welcome():
+    try:
+        with open("data/welcome.txt", 'r') as f:
+            print(f.read())
+    except:
+        pass
+    finally:
+        print("Welcome to the C4 Assistant Bot! Type 'help' for reference.")
 
 
 def main():
