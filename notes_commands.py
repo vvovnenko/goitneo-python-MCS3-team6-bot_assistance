@@ -1,6 +1,7 @@
 from command_handler import command
 from storage import storage
 from exceptions import BotSyntaxException
+from util.string_utils import get_divider
 
 
 @command(name='add-note')
@@ -56,7 +57,7 @@ def show_notes(args):
            all-notes
            """
     notes = storage.notes
-    return "\n".join([f"{note}" for note in notes.values()])
+    return get_divider().join([f"{note}" for note in notes.values()])
 
 
 @command(name='note')
@@ -94,7 +95,7 @@ def search_notes(args):
     else:
         result = notes.search(args)
 
-    return "\n".join(str(note) for note in result) if result else "Nothing found"
+    return get_divider().join(str(note) for note in result) if result else "Nothing found"
 
 
 @command(name='tag-note')

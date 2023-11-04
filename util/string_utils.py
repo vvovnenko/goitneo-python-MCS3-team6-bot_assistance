@@ -1,4 +1,5 @@
 import re
+from shutil import get_terminal_size
 
 
 def sanitize_args(func):
@@ -52,3 +53,9 @@ def count_similar_characters(str1, str2):
 
 def sanitize_args(input_string):
     return re.sub(r'[^a-zA-Z]', '', input_string)
+
+
+def get_divider():
+    term_size = get_terminal_size(fallback=(120, 50))
+    horizontal_ruler = u'\u2500'
+    return "\n" + horizontal_ruler * term_size.columns + "\n"
