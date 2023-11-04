@@ -11,7 +11,7 @@ def create_invalid_command_response(command: str) -> str:
     guessed_command = find_similar_command(command)
     response = f"'{command}' is not a bot-helper command. See 'help'."
     if guessed_command:
-        response += "\n    " + f"did you mean '{guessed_command}' ?"
+        response += "\n    " + f"did you mean {guessed_command} ?"
     return response
 
 
@@ -20,8 +20,14 @@ def find_similar_command(command: str) -> str:
     for guessed_command in COMMANDS.keys():
         score = get_similarity_score(command, guessed_command)
         if score > 0:
-            similar_commands[score] = guessed_command
-    return similar_commands[max(similar_commands.keys())] if similar_commands else None
+            similar_commands[guessed_command] = score
+
+    if not similar_commands:
+        return None
+
+    max_score = max(similar_commands.values())
+    guessed_commands = [f"'{k}'" for k, v in similar_commands.items() if v == max_score]
+    return " or ".join(guessed_commands)
 
 
 def create_command_doc(command_name: str) -> str:
