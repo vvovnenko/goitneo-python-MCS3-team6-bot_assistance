@@ -82,7 +82,7 @@ class Note:
         return any(search_tag in [tag.value for tag in self.tags] for search_tag in search_tags)
 
     def __str__(self):
-        return f"ID: {self.id:^4}|Text: {self.get_trimmed_text(self.text.value, 50):<50}|Tags: {' '.join(f'#{t.value}' for t in self.tags)}"
+        return f"ID: {self.id:^4} | Text: {self.text.value:<50} | Tags: {' '.join(f'#{t.value}' for t in self.tags)}"
 
 
 class NoteBook(UserDict):

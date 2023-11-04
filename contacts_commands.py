@@ -4,6 +4,7 @@ from storage import storage
 from exceptions import BotSyntaxException, NotFoundException
 from datetime import date, datetime
 from constant import DATE_FORMAT
+from util.string_utils import get_divider
 
 
 @command(name='add')
@@ -108,7 +109,8 @@ def show_all_contacts(args):
         all-contacts
     """
     contacts = storage.contacts
-    return "\n".join([f"{record}" for record in contacts.values()])
+
+    return get_divider().join([f"{record}" for record in contacts.values()])
 
 
 @command(name='del-contact')
