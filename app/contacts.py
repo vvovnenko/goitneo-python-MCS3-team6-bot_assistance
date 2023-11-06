@@ -133,13 +133,14 @@ class Record:
 
     def __str__(self):
         divider = '\n' + ('-' * 108) + '\n'
+        border = '\n' + (u'\u2500' * 108) + '\n'
         lines = [
             "| Name: {:20} | Birthday: {:10} | Email: {:45} |".format(
                 str(self.name), str(self.birthday), str(self.email)),
             "| Phones: {:96} |".format('; '.join(str(p) for p in self.phones)),
             "| Address: {:95} |".format(str(self.address)),
         ]
-        return divider + divider.join(lines) + divider
+        return border + divider.join(lines) + border
 
     def add_email(self, email):
         self.email = Email(email)

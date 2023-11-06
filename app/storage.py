@@ -37,7 +37,7 @@ class DataStorage:
 
         if not isinstance(self.__book, AddressBook):
             self.__book = AddressBook()
-            populateAddressBook(self.__book, 10)
+            populateAddressBook(self.__book, 100)
         if not isinstance(self.__notes, NoteBook):
             self.__notes = NoteBook()
             populateNotes(self.__notes, 50)

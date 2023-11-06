@@ -57,7 +57,7 @@ def show_notes(args):
            all-notes
            """
     notes = storage.notes
-    return get_divider().join([f"{note}" for note in notes.values()])
+    return get_divider().join([f"{note}" for note in notes.values()]) + get_divider()
 
 
 @command(name='note')
@@ -72,7 +72,8 @@ def get_note(args):
     if not args:
         raise BotSyntaxException()
     note = notes.find(args[0])
-    return f"id: {note.id}\ntext: {note.text}"
+    tags = ' '.join(f'#{t.value}' for t in note.tags)
+    return f"id: {note.id}\ntext: {note.text}\ntags: {tags}"
 
 
 @command(name='search-notes')
@@ -94,8 +95,8 @@ def search_notes(args):
         result = notes.search_by_tags(search_tags)
     else:
         result = notes.search(args)
-
-    return get_divider().join(str(note) for note in result) if result else "Nothing found"
+    divider = get_divider()
+    return divider + divider.join(str(note) for note in result) if result else "Nothing found" + divider
 
 
 @command(name='tag-note')

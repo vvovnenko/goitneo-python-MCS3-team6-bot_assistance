@@ -12,13 +12,9 @@ def populateAddressBook(book: AddressBook, quantity):
     for _ in range(quantity):
         record = Record(fake.first_name())
         record.add_phone(str(fake.random_number(digits=10, fix_len=True)))
-        if random.randint(0, 1):
-            record.add_birthday(fake.date_of_birth(
-                minimum_age=18, maximum_age=50).strftime(constant.DATE_FORMAT))
-        if random.randint(0, 1):
-            record.add_email(fake.email())
-        if random.randint(0, 1):
-            record.add_address(fake.street_address() + ', ' + fake.city())
+        record.add_birthday(fake.date_of_birth(minimum_age=18, maximum_age=50).strftime(constant.DATE_FORMAT))
+        record.add_email(fake.email())
+        record.add_address(fake.street_address() + ', ' + fake.city())
         book.add_record(record)
 
 
